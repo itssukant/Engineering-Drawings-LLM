@@ -150,9 +150,9 @@ if __name__ == '__main__':
     print("\n" + "=" * 70)
     print("🎯 Engineering Drawing Analyzer - Web UI")
     print("=" * 70)
-    print("\n📍 Opening in browser: http://localhost:5000")
+    print("\n📍 Opening in browser: http://localhost:5001")
     print("\n⚠️  Make sure Ollama is running: ollama serve")
     print("\n Press Ctrl+C to stop the server\n")
     print("=" * 70 + "\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5001)
