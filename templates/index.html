@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engineering Drawing Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="topbar">
+        <div class="brand">
+            <svg class="logo-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke-width="2"/>
+                <line x1="9" y1="9" x2="15" y2="9" stroke-width="2"/>
+                <line x1="9" y1="13" x2="15" y2="13" stroke-width="2"/>
+                <line x1="9" y1="17" x2="13" y2="17" stroke-width="2"/>
+            </svg>
+            <span>Drawing Analyzer</span>
+        </div>
+        <div class="model-status">
+            <div class="model-select">
+                <label for="model">Model:</label>
+                <select id="model" class="model-dropdown">
+                    <option value="llava">LLaVA (Default)</option>
+                    <option value="bakllava">BakLLaVA (High Quality)</option>
+                    <option value="moondream">Moondream (Fast)</option>
+                </select>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot" id="statusDot"></span>
+                <span id="statusText">Checking...</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="layout">
+        <!-- Left Panel -->
+        <aside class="left-panel">
+            <section class="upload-section">
+                <div class="dropzone" id="dropzone">
+                    <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke-width="2"/>
+                        <polyline points="17 8 12 3 7 8" stroke-width="2"/>
+                        <line x1="12" y1="3" x2="12" y2="15" stroke-width="2"/>
+                    </svg>
+                    <p class="dropzone-text">Drop engineering drawings here or <span class="browse-link">browse</span></p>
+                    <p class="dropzone-hint">PNG, JPG, GIF, BMP, TIFF (max 16MB)</p>
+                    <input type="file" id="fileInput" multiple accept=".png,.jpg,.jpeg,.gif,.bmp,.tiff,.tif" hidden>
+                </div>
+                <div class="file-chips" id="fileChips"></div>
+            </section>
+
+            <section class="prompt-section">
+                <label for="prompt" class="prompt-label">Ask a question about your drawings:</label>
+                <textarea 
+                    id="prompt" 
+                    class="prompt-input" 
+                    rows="6" 
+                    placeholder="Example: What are the main dimensions and tolerances shown in this drawing?"
+                ></textarea>
+                
+                <div class="prompt-examples">
+                    <span class="examples-label">Quick prompts:</span>
+                    <div class="example-pills">
+                        <button class="pill-btn" data-prompt="Extract all dimensions and tolerances from this drawing">Dimensions</button>
+                        <button class="pill-btn" data-prompt="List all material specifications, finishes, and standards">Materials</button>
+                        <button class="pill-btn" data-prompt="Identify all GD&T (geometric dimensioning and tolerancing) symbols">GD&T</button>
+                        <button class="pill-btn" data-prompt="Extract title block information (drawing number, revision, scale, etc.)">Title Block</button>
+                        <button class="pill-btn" data-prompt="Compare these drawings and list all differences in dimensions and specifications">Compare</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="analyzeBtn" class="btn-primary" disabled>
+                        <span id="btnText">Analyze</span>
+                        <span id="btnLoader" class="loader" hidden></span>
+                    </button>
+                    <button id="clearBtn" class="btn-ghost">Clear</button>
+                </div>
+            </section>
+        </aside>
+
+        <!-- Right Panel -->
+        <section class="right-panel">
+            <div id="emptyState" class="empty-state">
+                <svg class="empty-icon" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke-width="1.5"/>
+                    <polyline points="14 2 14 8 20 8" stroke-width="1.5"/>
+                    <line x1="9" y1="13" x2="15" y2="13" stroke-width="1.5"/>
+                    <line x1="9" y1="17" x2="15" y2="17" stroke-width="1.5"/>
+                </svg>
+                <h3>Ready to analyze your engineering drawings</h3>
+                <p>Upload one or more drawings and ask questions to get AI-powered analysis</p>
+            </div>
+
+            <div id="resultsContainer" class="results-container" hidden>
+                <div class="run-header">
+                    <div class="images-preview" id="imagesPreview"></div>
+                    <div class="run-meta">
+                        <span class="meta-badge" id="modelBadge"></span>
+                        <span class="meta-time" id="timestamp"></span>
+                    </div>
+                </div>
+
+                <div class="answer-card">
+                    <div class="card-header">
+                        <h3>Analysis Results</h3>
+                        <div class="card-actions">
+                            <button class="icon-btn" id="copyBtn" title="Copy to clipboard">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" stroke-width="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke-width="2"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="answer-content" id="answerContent"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
