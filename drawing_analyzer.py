@@ -87,10 +87,13 @@ class DrawingAnalyzer:
         
         # Call Ollama API
         try:
-            response = requests.post(self.api_url, json=payload, timeout=120)
+            # Increase timeout for M1/M2 Macs which take longer for first run
+            response = requests.post(self.api_url, json=payload, timeout=300)
             response.raise_for_status()
             result = response.json()
             return result.get("response", "No response from model")
+        except requests.exceptions.ReadTimeout as e:
+            raise RuntimeError(f"Model took too long to respond (timeout after 300s). Try again - it should be faster on subsequent runs.")
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"Error calling Ollama API: {e}")
     
@@ -123,9 +126,11 @@ class DrawingAnalyzer:
         
         # Call Ollama API
         try:
-            response = requests.post(self.api_url, json=payload, timeout=180)
+            response = requests.post(self.api_url, json=payload, timeout=300)
             response.raise_for_status()
             result = response.json()
             return result.get("response", "No response from model")
+        except requests.exceptions.ReadTimeout as e:
+            raise RuntimeError(f"Model took too long to respond (timeout after 300s). Try again - it should be faster on subsequent runs.")
         except requests.exceptions.RequestException as e:
             raise RuntimeError(f"Error calling Ollama API: {e}")

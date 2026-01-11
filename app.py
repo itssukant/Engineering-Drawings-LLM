@@ -71,6 +71,13 @@ def analyze():
         
         # Get model (optional)
         model = request.form.get('model', 'llava')
+        # Normalize model name - Ollama uses "llava:latest" format
+        if model == 'llava' or model == 'llava:latest':
+            model = 'llava:latest'
+        elif model == 'bakllava':
+            model = 'bakllava:latest'
+        elif model == 'moondream':
+            model = 'moondream:latest'
         
         # Save uploaded files
         image_paths = []
@@ -113,11 +120,15 @@ def analyze():
         })
     
     except ConnectionError as e:
+        print(f"[ERROR] Connection Error: {e}")
         return jsonify({
             'error': 'Cannot connect to Ollama. Please ensure Ollama is running (ollama serve)',
             'details': str(e)
         }), 503
     except Exception as e:
+        print(f"[ERROR] Analysis Exception: {type(e).__name__}: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({
             'error': 'Analysis failed',
             'details': str(e)
